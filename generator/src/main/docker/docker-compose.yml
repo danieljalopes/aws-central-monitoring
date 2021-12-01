@@ -1,0 +1,10 @@
+version: '3'
+services:
+  generator:
+    build:
+      context: ../
+      dockerfile: build/Dockerfile.jvm
+    environment:
+      - quarkus.elasticsearch.hosts: "elasticsearch:9200"
+
+

@@ -1,0 +1,39 @@
+version: '3.7'
+services:
+  elasticsearch:
+    container_name: elasticsearch
+    image: elasticsearch:7.14.2
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      ES_JAVA_OPTS: '-Xms512m -Xmx512m'
+      discovery.type: 'single-node'
+    networks:
+      - proxynet
+
+  kibana:
+      container_name: kibana
+      image: docker.elastic.co/kibana/kibana:7.14.2
+      ports:
+        - "5601:5601"
+      environment:
+        ELASTICSEARCH_HOSTS: '["http://elasticsearch:9200"]'
+      networks:
+        - proxynet
+      depends_on:
+        - elasticsearch
+
+  fluentd:
+      container_name: fluentd
+      build: ./fluentd
+      ports:
+        - "12201:12201/udp"
+
+      networks:
+        - proxynet
+      depends_on:
+        - elasticsearch
+networks:
+  proxynet:
+    name: central_log_network
